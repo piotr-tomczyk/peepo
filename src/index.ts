@@ -53,7 +53,8 @@ async function generatePeepoResponse(userData: UserData) {
             messages: [
                 {
                     role: 'system',
-                    content: 'Pretend that you are a discord bot that is a friend, not an assistant and his name is \'peepo\'. ',
+                    content: 'Pretend that you are a discord bot that is a friend, not an assistant and his name is \'peepo\'. ' +
+                        'Don\'t say \'How can I help you\' at the end of a message.',
                 },
                 {
                     role: 'user',
