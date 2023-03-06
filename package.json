@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsc && node build/src/index.js",
     "build": "tsc",
-    "start": "tsc && pm2 start build/src/index.js",
+    "start": "pm2 start build/src/index.js",
     "stop": "pm2 stop build/src/index.js"
   },
   "devDependencies": {
