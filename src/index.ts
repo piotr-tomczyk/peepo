@@ -37,9 +37,8 @@ client.on("messageCreate", async (message) => {
     const channel = client.channels.cache.get(CHANNEL_ID);
     const username = message.author.username;
     const messageContent = message.content;
-    const authorId = message.author.id;
     const channelId = message.channelId;
-    if ((authorId === 'Hej' || authorId === 'Peyvir')
+    if ((username === 'Hej' || username === 'Peyvir')
         && channelId === CHANNEL_ID
         && messageContent) {
         const peepoResponse = await generatePeepoResponse({messageContent, username});
