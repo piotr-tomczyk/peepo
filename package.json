@@ -1,7 +1,7 @@
 {
   "name": "our-friend",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "tsc && node build/src/index.js",
