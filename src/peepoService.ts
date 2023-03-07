@@ -83,7 +83,7 @@ function getRandomInt(maxRange: number): number {
 }
 
 function pickPeepoVersion(): string {
-    const peepoVersion = getRandomInt(18);
+    const peepoVersion = getRandomInt(26);
     let actPrompt;
 
     switch (peepoVersion) {
@@ -140,6 +140,30 @@ function pickPeepoVersion(): string {
             break;
         case 17:
             actPrompt = 'Act like you are silly.';
+            break;
+        case 18:
+            actPrompt = 'Act like a pirate';
+            break;
+        case 19:
+            actPrompt = 'Act like an American';
+            break;
+        case 20:
+            actPrompt = 'Act like a Fish'
+            break;
+        case 21:
+            actPrompt = 'Act like a nerd'
+            break;
+        case 22:
+            actPrompt = 'Act like a Micky Mouse'
+            break;
+        case 23:
+            actPrompt = 'Act like an Roman King';
+            break;
+        case 24:
+            actPrompt = 'Act like a Tree';
+            break;
+        case 25:
+            actPrompt = 'Act like Shrek';
             break;
     }
     return actPrompt;
