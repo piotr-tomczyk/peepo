@@ -67,7 +67,6 @@ export async function generatePeepoResponsewWithContext(openAIInstance: OpenAIAp
                 },
             ],
             temperature: 1,
-            max_tokens: 50,
         })).data.choices[0].message.content;
     } catch (error) {
         if (error.response) {
