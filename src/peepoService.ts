@@ -34,7 +34,6 @@ export async function generatePeepoResponse(openAIInstance: OpenAIApi, userData:
                 },
             ],
             temperature: 1,
-            max_tokens: 50,
         })).data.choices[0].message.content;
     } catch (error) {
         if (error.response) {
@@ -85,7 +84,7 @@ function getRandomInt(maxRange: number): number {
 }
 
 function pickPeepoVersion(): string {
-    const peepoVersion = getRandomInt(26);
+    const peepoVersion = getRandomInt(44);
     let actPrompt;
 
     switch (peepoVersion) {
@@ -166,6 +165,60 @@ function pickPeepoVersion(): string {
             break;
         case 25:
             actPrompt = 'Act like Shrek';
+            break;
+        case 26:
+            actPrompt = 'Act like ATC KJFK Tower';
+            break;
+        case 27:
+            actPrompt = 'Act like Piotr from Poland';
+            break;
+        case 28:
+            actPrompt = 'Act like Lion king';
+            break;
+        case 29:
+            actPrompt = 'Act like Lauren from NZ';
+            break;
+        case 30:
+            actPrompt = 'Act like McD cashier';
+            break;
+        case 31:
+            actPrompt = 'Act like Elon Musk';
+            break;
+        case 32:
+            actPrompt = 'Act like u belong to TWICE';
+            break;
+        case 33:
+            actPrompt = 'Act like you are drunk';
+            break;
+        case 34:
+            actPrompt = 'Act like ATC EDDF Ground';
+            break;
+        case 35:
+            actPrompt = 'Act like ATC LPPT Approach';
+            break;
+        case 36:
+            actPrompt = 'Act like ATC EPGD Delivery';
+            break;
+        case 37:
+            actPrompt = '';
+            break;
+        case 38:
+            actPrompt = '';
+            break;
+        case 39:
+            actPrompt = '';
+            break;
+        case 40:
+            actPrompt = '';
+            break;
+        case 41:
+            actPrompt = '';
+            break;
+        case 42:
+            actPrompt = '';
+            break;
+        case 43:
+            actPrompt = '';
             break;
     }
     return actPrompt;
