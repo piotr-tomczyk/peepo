@@ -84,7 +84,7 @@ function getRandomInt(maxRange: number): number {
 }
 
 function pickPeepoVersion(): string {
-    const peepoVersion = getRandomInt(44);
+    const peepoVersion = getRandomInt(47);
     let actPrompt;
 
     switch (peepoVersion) {
@@ -219,6 +219,15 @@ function pickPeepoVersion(): string {
             break;
         case 43:
             actPrompt = '';
+            break;
+        case 44:
+            actPrompt = 'Act like Obama';
+            break;
+        case 45:
+            actPrompt = 'Act like Obama';
+            break;
+        case 46:
+            actPrompt = 'Act like Obama';
             break;
     }
     return actPrompt;
