@@ -1,6 +1,10 @@
 import dotenv from 'dotenv';
-import { Configuration, OpenAIApi } from "openai";
-import { peepoVersions } from "./peepoVersions.js";
+import {
+    ChatCompletionRequestMessage,
+    Configuration,
+    OpenAIApi
+} from 'openai';
+import { peepoVersions } from './peepoVersions.js';
 
 dotenv.config();
 
@@ -24,21 +28,44 @@ export function initializeOpenAI() {
 }
 export async function generatePeepoResponse(openAIInstance: OpenAIApi, userData: UserData) {
     console.log('Generating Peepo response');
+    const messages = [
+        getPeepoSystemMessage(),
+        {
+            role: 'user',
+            content: userData.messageContent,
+        } as ChatCompletionRequestMessage,
+    ]
+    return generatePeepoMessage(openAIInstance, messages);
+}
+
+export async function generatePeepoResponseWithContext(openAIInstance: OpenAIApi, userData: UserData) {
+    console.log('Generating Peepo context response');
+    const messages = [
+        getPeepoSystemMessage(),
+        {
+            role: 'assistant',
+            content: userData.referenceMessageContent,
+        } as ChatCompletionRequestMessage,
+        {
+            role: 'user',
+            content: userData.messageContent,
+        } as ChatCompletionRequestMessage,
+    ]
+    return generatePeepoMessage(openAIInstance, messages);
+
+}
+
+export async function generatePeepoResponseInThread(openAIInstance: OpenAIApi, threadMessages: ChatCompletionRequestMessage[]) {
+    console.log('Generating Peepo thread response');
+    const messages = [getPeepoSystemMessage()].concat(threadMessages);
+    return generatePeepoMessage(openAIInstance, messages);
+}
+
+async function generatePeepoMessage(openAIInstance: OpenAIApi, messages: ChatCompletionRequestMessage[]) {
     try {
-        return  (await openAIInstance.createChatCompletion({
+        return (await openAIInstance.createChatCompletion({
             model: 'gpt-3.5-turbo',
-            messages: [
-                {
-                    role: 'system',
-                    content: 'Pretend you are discord bot that is friend, not assistant and his name is \'peepo\'. ' +
-                        pickPeepoVersion() +
-                        'Don\'t say \'How can I help you\' at the end of a message.',
-                },
-                {
-                    role: 'user',
-                    content: userData.messageContent,
-                },
-            ],
+            messages,
             temperature: 1,
         })).data.choices[0].message.content;
     } catch (error) {
@@ -51,37 +78,13 @@ export async function generatePeepoResponse(openAIInstance: OpenAIApi, userData:
     }
 }
 
-export async function generatePeepoResponsewWithContext(openAIInstance: OpenAIApi, userData: UserData) {
-    console.log('Generating Peepo context response');
-    try {
-        return (await openAIInstance.createChatCompletion({
-            model: 'gpt-3.5-turbo',
-            messages: [
-                {
-                    role: 'system',
-                    content: 'Pretend you are discord bot that is friend, not assistant and his name is \'peepo\'. ' +
-                        pickPeepoVersion() +
-                        'Don\'t say \'How can I help you\' at the end of a message.',
-                },
-                {
-                    role: 'assistant',
-                    content: userData.referenceMessageContent,
-                },
-                {
-                    role: 'user',
-                    content: userData.messageContent,
-                },
-            ],
-            temperature: 1,
-        })).data.choices[0].message.content;
-    } catch (error) {
-        if (error.response) {
-            console.error(`Peepo generator failed ${error}`);
-        } else {
-            console.error('Peepo generator failed');
-        }
-        return '';
-    }
+function getPeepoSystemMessage() {
+    return {
+        role: 'system',
+        content: 'Pretend you are discord bot that is friend, not assistant and his name is \'peepo\'. ' +
+            pickPeepoVersion() +
+            'Don\'t say \'How can I help you\' at the end of a message.',
+    } as ChatCompletionRequestMessage;
 }
 
 function getRandomInt(maxRange: number): number {
@@ -99,7 +102,7 @@ function pickPeepoVersion(): string {
 
 function generateNewPeepoVersion() {
     const peepoVersionKeys = Object.keys(peepoVersions);
-    peepoVersion = peepoVersions[peepoVersionKeys[Math.floor(Math.random() * peepoVersionKeys.length)]];
+    peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
 }
 
 export interface UserData {
