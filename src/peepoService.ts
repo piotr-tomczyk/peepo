@@ -5,6 +5,7 @@ import {
     OpenAIApi
 } from 'openai';
 import { peepoVersions } from './peepoVersions.js';
+import { getRandomInt, UserData as UserDataType } from './utils.js';
 
 dotenv.config();
 
@@ -26,7 +27,7 @@ export function initializeOpenAI() {
 
     return openAIInstance;
 }
-export async function generatePeepoResponse(openAIInstance: OpenAIApi, userData: UserData) {
+export async function generatePeepoResponse(openAIInstance: OpenAIApi, userData: UserDataType) {
     console.log('Generating Peepo response');
     const messages = [
         getPeepoSystemMessage(),
@@ -38,7 +39,7 @@ export async function generatePeepoResponse(openAIInstance: OpenAIApi, userData:
     return generatePeepoMessage(openAIInstance, messages);
 }
 
-export async function generatePeepoResponseWithContext(openAIInstance: OpenAIApi, userData: UserData) {
+export async function generatePeepoResponseWithContext(openAIInstance: OpenAIApi, userData: UserDataType) {
     console.log('Generating Peepo context response');
     const messages = [
         getPeepoSystemMessage(),
@@ -87,10 +88,6 @@ function getPeepoSystemMessage() {
     } as ChatCompletionRequestMessage;
 }
 
-function getRandomInt(maxRange: number): number {
-    return Math.floor(Math.random() * maxRange);
-}
-
 function pickPeepoVersion(): string {
     if (Date.now() - currentDay < 1000 * 3600 * 24) {
         return peepoVersion;
@@ -105,8 +102,3 @@ function generateNewPeepoVersion() {
     peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
 }
 
-export interface UserData {
-    messageContent: string,
-    referenceMessageContent?: string,
-    username: string,
-}
