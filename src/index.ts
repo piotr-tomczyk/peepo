@@ -63,10 +63,6 @@ client.on("messageCreate", async (message) => {
     await sendPeepoNormalMessage(author, messageContent, mainChannel, dumbEmoji);
 });
 
-client.on('threadCreate', (threadChannel) => {
-        console.log({threadChannel});
-});
-
 async function sendPeepoNormalMessage(author: User, messageContent, channel, dumbEmoji,) {
     const canSendMessage = !author.bot
         && messageContent;
