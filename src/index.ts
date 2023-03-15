@@ -134,5 +134,5 @@ async function getThreadMessages(threadChannel: ThreadChannel) {
         } as ChatCompletionRequestMessage);
     }
 
-    return threadMessages.length < 5 ? threadMessages.reverse() : threadMessages.reverse().slice(-5);
+    return threadMessages.length < 5 ? threadMessages.reverse() : threadMessages.reverse().slice(-7);
 }
