@@ -38,8 +38,11 @@ client.on("messageCreate", async (message) => {
 
     const isMessageChannelAThread = messageChannel.isThread();
 
-    if ((isMessageChannelAThread && messageChannel.parentId !== CHANNEL_ID)
-        || channelId !== CHANNEL_ID) {
+    if (isMessageChannelAThread
+        && messageChannel.parentId !== CHANNEL_ID) {
+        return;
+    } else if (!isMessageChannelAThread
+        && channelId !== CHANNEL_ID) {
         return;
     }
 
