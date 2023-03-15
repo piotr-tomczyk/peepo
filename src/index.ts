@@ -113,7 +113,7 @@ async function sendPeepoThreadMessage(threadMessages, author, messageContent, ch
             threadMessages,
         );
         console.log('Generated peepo thread response');
-        await (channel as ThreadChannel).send(`${peepoResponse} ${dumbEmoji}`);
+        await (channel as ThreadChannel).send(`${peepoResponse}`);
         console.log('Peepo thread message sent');
     }
 }
@@ -133,5 +133,6 @@ async function getThreadMessages(threadChannel: ThreadChannel) {
             content: `${message.content}`,
         } as ChatCompletionRequestMessage);
     }
-    return threadMessages.reverse();
+
+    return threadMessages.length < 5 ? threadMessages.reverse() : threadMessages.reverse().slice(-5);
 }
