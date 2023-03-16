@@ -142,7 +142,7 @@ async function sendPeepoGifMessage() {
         const tenorUrl = `https://tenor.googleapis.com/v2/search?q=${tenorQuery}&key=${tenorApiKey}&limit=${tenorLimit}&media_filter=${tenorMediaFilter}`;
         const gifResponse: any = await axios.get(tenorUrl);
         const gif = gifResponse.data?.results?.[0].url;
-        await (gifChannel as TextChannel).send(`${peepoResponse} \n ${gif}`);
+        await (gifChannel as TextChannel).send(`${gif}`);
     } catch(error) {
         console.log('Error while fetching gif', error);
     }
