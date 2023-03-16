@@ -9,7 +9,6 @@ import { getRandomInt, UserData as UserDataType } from './utils.js';
 
 dotenv.config();
 
-let currentDay = Date.now();
 let peepoVersion = peepoVersions['default'];
 export function initializeOpenAI() {
     const configuration = new Configuration({
@@ -62,6 +61,18 @@ export async function generatePeepoResponseInThread(openAIInstance: OpenAIApi, t
     return generatePeepoMessage(openAIInstance, messages);
 }
 
+export async function generatePeepoGifResponse(openAIInstance: OpenAIApi) {
+    const messages = [
+        getPeepoSystemMessage(),
+        {
+            role: 'user',
+            content: 'peepo give me some one funny gif keyword that represents you well, ' +
+                'use following format, gif: "keyword"',
+        } as ChatCompletionRequestMessage,
+    ];
+    return generatePeepoMessage(openAIInstance, messages);
+}
+
 async function generatePeepoMessage(openAIInstance: OpenAIApi, messages: ChatCompletionRequestMessage[]) {
     try {
         return (await openAIInstance.createChatCompletion({
@@ -89,16 +100,14 @@ function getPeepoSystemMessage() {
 }
 
 function pickPeepoVersion(): string {
-    if (Date.now() - currentDay < 1000 * 3600 * 24) {
-        return peepoVersion;
-    }
-    generateNewPeepoVersion();
-    currentDay = Date.now();
     return peepoVersion;
 }
 
 function generateNewPeepoVersion() {
     const peepoVersionKeys = Object.keys(peepoVersions);
     peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
+    setInterval(() => {
+        peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
+    }, 1000 * 3600 * 24);
 }
 

@@ -9,14 +9,18 @@ import {
     generatePeepoResponse,
     generatePeepoResponseWithContext,
     generatePeepoResponseInThread,
+    generatePeepoGifResponse,
 } from './peepoService.js';
 import { ChatCompletionRequestMessage } from 'openai';
+import axios from 'axios';
 
 dotenv.config();
 
 const openAIInstance = initializeOpenAI();
 
-const CHANNEL_ID = process.env.CHANNEL_ID;
+const TEXT_CHANNEL_ID = process.env.TEXT_CHANNEL_ID;
+const GIF_CHANNEL_ID = process.env.GIF_CHANNEL_ID;
+
 
 const client = new Client({
     intents: [
@@ -31,18 +35,20 @@ const client = new Client({
 client.login(process.env.DISCORD_TOKEN);
 console.log('Discord bot initialized');
 
+await startPeepoGifGenerator();
+
 client.on("messageCreate", async (message) => {
     const channelId = message.channelId;
     const messageChannel = client.channels.cache.get(channelId);
-    const mainChannel = client.channels.cache.get(CHANNEL_ID);
+    const mainChannel = client.channels.cache.get(TEXT_CHANNEL_ID);
 
     const isMessageChannelAThread = messageChannel.isThread();
 
     if (isMessageChannelAThread
-        && messageChannel.parentId !== CHANNEL_ID) {
+        && messageChannel.parentId !== TEXT_CHANNEL_ID) {
         return;
     } else if (!isMessageChannelAThread
-        && channelId !== CHANNEL_ID) {
+        && channelId !== TEXT_CHANNEL_ID) {
         return;
     }
 
@@ -113,8 +119,32 @@ async function sendPeepoThreadMessage(threadMessages, author, messageContent, ch
             threadMessages,
         );
         console.log('Generated peepo thread response');
-        await (channel as ThreadChannel).send(`${peepoResponse}`);
+        await (channel as ThreadChannel).send(`${peepoResponse} ${dumbEmoji}`);
         console.log('Peepo thread message sent');
+    }
+}
+
+async function sendPeepoGifMessage() {
+    const peepoResponse = await generatePeepoGifResponse(openAIInstance);
+    const gifRegex = /"([^"]+)"/;
+    const gifKeyword = peepoResponse.match(gifRegex);
+    let tenorQuery = '';
+    if (gifKeyword) {
+        tenorQuery = gifKeyword[1];
+    } else {
+        return;
+    }
+    try {
+        const gifChannel = client.channels.cache.get(GIF_CHANNEL_ID);
+        const tenorApiKey = process.env.TENOR_API_KEY;
+        const tenorLimit = 1;
+        const tenorMediaFilter = 'gif';
+        const tenorUrl = `https://tenor.googleapis.com/v2/search?q=${tenorQuery}&key=${tenorApiKey}&limit=${tenorLimit}&media_filter=${tenorMediaFilter}`;
+        const gifResponse: any = await axios.get(tenorUrl);
+        const gif = gifResponse.data?.results?.[0].url;
+        await (gifChannel as TextChannel).send(`${peepoResponse} \n ${gif}`);
+    } catch(error) {
+        console.log('Error while fetching gif', error);
     }
 }
 
@@ -135,4 +165,11 @@ async function getThreadMessages(threadChannel: ThreadChannel) {
     }
 
     return threadMessages.length < 5 ? threadMessages.reverse() : threadMessages.reverse().slice(-7);
+}
+
+async function startPeepoGifGenerator() {
+    await sendPeepoGifMessage();
+    setInterval(async () => {
+        await sendPeepoGifMessage();
+    }, 1000 * 3600)
 }
