@@ -128,11 +128,11 @@ async function sendPeepoGifMessage() {
     const peepoResponse = await generatePeepoGifResponse(openAIInstance);
     const gifRegex = /"([^"]+)"/;
     const gifKeyword = peepoResponse.match(gifRegex);
-    let tenorQuery = '';
+    let tenorQuery;
     if (gifKeyword) {
         tenorQuery = gifKeyword[1];
     } else {
-        return;
+        tenorQuery = peepoResponse;
     }
     try {
         const gifChannel = client.channels.cache.get(GIF_CHANNEL_ID);
@@ -171,5 +171,5 @@ async function startPeepoGifGenerator() {
     await sendPeepoGifMessage();
     setInterval(async () => {
         await sendPeepoGifMessage();
-    }, 1000 * 3600)
+    }, 1000 * 3600);
 }
