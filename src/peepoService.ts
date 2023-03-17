@@ -105,7 +105,7 @@ function pickPeepoVersion(): string {
 
 function generateNewPeepoVersion() {
     const peepoVersionKeys = Object.keys(peepoVersions);
-    peepoVersion = peepoVersions['neanderthal'];
+    peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
     setInterval(() => {
         peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
     }, 1000 * 3600 * 24);
