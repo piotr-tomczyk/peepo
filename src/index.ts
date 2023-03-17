@@ -53,26 +53,26 @@ client.on("messageCreate", async (message) => {
     }
 
     console.log('Received message');
-    const dumbEmoji = message.guild.emojis.cache.get('1014860400564650044');
+    // const dumbEmoji = message.guild.emojis.cache.get('1014860400564650044');
     const author = message.author;
     const messageContent = message.content;
     const messageReference = message.reference;
 
     if (messageReference) {
-        await sendPeepoReferenceMessage(author, messageContent, mainChannel, dumbEmoji, messageReference);
+        await sendPeepoReferenceMessage(author, messageContent, mainChannel, messageReference);
         return;
     }
 
     if (isMessageChannelAThread) {
         const threadMessages = await getThreadMessages(messageChannel);
-        await sendPeepoThreadMessage(threadMessages, author, messageContent, messageChannel, dumbEmoji);
+        await sendPeepoThreadMessage(threadMessages, author, messageContent, messageChannel);
         return;
     }
 
-    await sendPeepoNormalMessage(author, messageContent, mainChannel, dumbEmoji);
+    await sendPeepoNormalMessage(author, messageContent, mainChannel);
 });
 
-async function sendPeepoNormalMessage(author: User, messageContent, channel, dumbEmoji,) {
+async function sendPeepoNormalMessage(author: User, messageContent, channel) {
     const canSendMessage = !author.bot
         && messageContent;
     if (canSendMessage) {
@@ -84,12 +84,12 @@ async function sendPeepoNormalMessage(author: User, messageContent, channel, dum
             }
         );
         console.log('Generated peepo response');
-        await (channel as TextChannel).send(`${peepoResponse} ${dumbEmoji}`);
+        await (channel as TextChannel).send(`${peepoResponse}`);
         console.log('Peepo message sent');
     }
 }
 
-async function  sendPeepoReferenceMessage(author: User, messageContent, channel, dumbEmoji, messageReference) {
+async function  sendPeepoReferenceMessage(author: User, messageContent, channel, messageReference) {
     const referenceMessageContent = (await channel.messages.fetch(messageReference.messageId)).content;
     const canSendMessage = !author.bot
         && messageContent
@@ -104,12 +104,12 @@ async function  sendPeepoReferenceMessage(author: User, messageContent, channel,
             }
         );
         console.log('Generated peepo context response');
-        await (channel as TextChannel).send(`${peepoResponse} ${dumbEmoji}`);
+        await (channel as TextChannel).send(`${peepoResponse}`);
         console.log('Peepo context message sent');
     }
 }
 
-async function sendPeepoThreadMessage(threadMessages, author, messageContent, channel, dumbEmoji) {
+async function sendPeepoThreadMessage(threadMessages, author, messageContent, channel) {
     const canSendMessage = !author.bot
         && messageContent
         && threadMessages;
@@ -119,7 +119,7 @@ async function sendPeepoThreadMessage(threadMessages, author, messageContent, ch
             threadMessages,
         );
         console.log('Generated peepo thread response');
-        await (channel as ThreadChannel).send(`${peepoResponse} ${dumbEmoji}`);
+        await (channel as ThreadChannel).send(`${peepoResponse}`);
         console.log('Peepo thread message sent');
     }
 }
