@@ -164,7 +164,7 @@ async function getThreadMessages(threadChannel: ThreadChannel) {
         } as ChatCompletionRequestMessage);
     }
 
-    return threadMessages.length < 5 ? threadMessages.reverse() : threadMessages.reverse().slice(-7);
+    return threadMessages.reverse();
 }
 
 async function startPeepoGifGenerator() {
