@@ -76,7 +76,7 @@ export async function generatePeepoGifResponse(openAIInstance: OpenAIApi) {
 async function generatePeepoMessage(openAIInstance: OpenAIApi, messages: ChatCompletionRequestMessage[]) {
     try {
         return (await openAIInstance.createChatCompletion({
-            model: 'gpt-3.5-turbo',
+            model: 'gpt-4',
             messages,
             temperature: 1,
         })).data.choices[0].message.content;
