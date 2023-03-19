@@ -115,6 +115,6 @@ function generateNewPeepoVersion() {
         const textChannel = await getTextChannel();
         await sendDiscordMessage(textChannel, 'Peepo is changing :PauseMan:');
         peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
-    }, ONE_DAY/24*360);
+    }, ONE_DAY);
 }
 
