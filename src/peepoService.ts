@@ -70,9 +70,9 @@ export async function generatePeepoGifResponse() {
     const messages = [
         getPeepoSystemMessage(),
         {
-            role: 'user',
-            content: 'peepo give me some one funny gif keyword that represents you well, ' +
-                'use following format, gif: "keyword"',
+            role: 'system',
+            content: 'peepo give me some one original gif keyword that represents you well, ' +
+                ', respond only using following format, gif: "keyword"',
         } as ChatCompletionRequestMessage,
     ];
     return generatePeepoMessage(messages);

@@ -17,7 +17,8 @@ import { ChatCompletionRequestMessage } from 'openai';
 let discordClient;
 const TEXT_CHANNEL_ID = process.env.TEXT_CHANNEL_ID;
 const GIF_CHANNEL_ID = process.env.GIF_CHANNEL_ID;
-export function initializeDiscordClient() {
+const TWO_HOURS = 1000 * 3600 * 2
+export async function initializeDiscordClient() {
     dotenv.config();
     discordClient = new Client({
         intents: [
@@ -33,6 +34,7 @@ export function initializeDiscordClient() {
     console.log('Discord client initialized');
 
     discordClient.on('messageCreate', handleDiscordMessageEvent);
+    await startPeepoGifGenerator();
 }
 
 
@@ -121,22 +123,26 @@ export async function sendPeepoGifMessage() {
     const peepoResponse = await generatePeepoGifResponse();
     const gifRegex = /"([^"]+)"/;
     const gifKeyword = peepoResponse.match(gifRegex);
+    const gifChannel = discordClient.channels.cache.get(GIF_CHANNEL_ID);
     let tenorQuery;
+
     if (gifKeyword) {
         tenorQuery = gifKeyword[1];
     } else {
         tenorQuery = peepoResponse;
     }
+
     try {
-        const gifChannel = discordClient.channels.cache.get(GIF_CHANNEL_ID);
         const tenorApiKey = process.env.TENOR_API_KEY;
         const tenorLimit = 1;
         const tenorMediaFilter = 'gif';
         const tenorUrl = `https://tenor.googleapis.com/v2/search?q=${tenorQuery}&key=${tenorApiKey}&limit=${tenorLimit}&media_filter=${tenorMediaFilter}`;
         const gifResponse: any = await axios.get(tenorUrl);
         const gif = gifResponse.data?.results?.[0].url;
-        await (gifChannel as TextChannel).send(`${gif}`);
+        await sendDiscordMessage(gifChannel, gif);
+
     } catch(error) {
+        await sendDiscordMessage(gifChannel, 'I failed the gif :Dedge:');
         console.log('Error while fetching gif', error);
     }
 }
@@ -161,11 +167,18 @@ async function getThreadMessages(threadChannel: ThreadChannel) {
     return threadMessages.length < 7 ? threadMessages.reverse() : threadMessages.splice(0, 7);
 }
 
+async function startPeepoGifGenerator() {
+    await sendPeepoGifMessage();
+    setInterval(async () => {
+        await sendPeepoGifMessage();
+    }, TWO_HOURS);
+}
+
 export async function sendDiscordMessage(channel: TextChannel | ThreadChannel, message: String) {
     try {
         await (channel as TextChannel | ThreadChannel).send(`${message}`);
-    } catch (e) {
-        console.log(`Peepo failed to send a message: ${message}.`, e);
+    } catch (error) {
+        console.log(`Peepo failed to send a message: ${message}.`, error);
     }
 }
 
