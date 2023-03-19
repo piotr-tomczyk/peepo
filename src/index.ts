@@ -1,7 +1,10 @@
-import { initializeDiscordClient } from './discordService.js';
+import { initializeDiscordClient, startPeepoGifGenerator} from './discordService.js';
 import { initializeOpenAI } from './peepoService.js';
 
-initializeOpenAI();
-
 await initializeDiscordClient();
+
+initializeOpenAI();
+setTimeout(async () => {
+    await startPeepoGifGenerator();
+}, 5000);
 

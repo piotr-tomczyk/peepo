@@ -87,7 +87,7 @@ async function generatePeepoMessage(messages: ChatCompletionRequestMessage[]) {
         })).data.choices[0].message.content;
     } catch (error) {
         if (error.response) {
-            console.error(`Peepo generator failed ${error}`);
+            console.error('Peepo generator failed', error);
         } else {
             console.error('Peepo generator failed');
         }
@@ -115,6 +115,6 @@ function generateNewPeepoVersion() {
         const textChannel = await getTextChannel();
         await sendDiscordMessage(textChannel, 'Peepo is changing :PauseMan:');
         peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
-    }, ONE_DAY);
+    }, ONE_DAY/24*360);
 }
 

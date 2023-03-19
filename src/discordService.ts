@@ -34,7 +34,6 @@ export async function initializeDiscordClient() {
     console.log('Discord client initialized');
 
     discordClient.on('messageCreate', handleDiscordMessageEvent);
-    await startPeepoGifGenerator();
 }
 
 
@@ -59,7 +58,12 @@ async function handleDiscordMessageEvent(discordMessage) {
     const messageReference = discordMessage.reference;
 
     if (messageReference) {
-        await sendPeepoReferenceMessage(author, messageContent, mainChannel, messageReference);
+        await sendPeepoReferenceMessage(
+            author,
+            messageContent,
+            isMessageChannelAThread ? messageChannel : mainChannel,
+            messageReference
+        );
         return;
     }
 
@@ -121,9 +125,14 @@ async function sendPeepoThreadMessage(threadMessages, author, messageContent, ch
 
 export async function sendPeepoGifMessage() {
     const peepoResponse = await generatePeepoGifResponse();
+    const gifChannel = await getDiscordChannelFromId(GIF_CHANNEL_ID);
+
+    if (!peepoResponse) {
+        await sendDiscordMessage(gifChannel, 'I failed the gif :Dedge:');
+    }
+
     const gifRegex = /"([^"]+)"/;
     const gifKeyword = peepoResponse.match(gifRegex);
-    const gifChannel = discordClient.channels.cache.get(GIF_CHANNEL_ID);
     let tenorQuery;
 
     if (gifKeyword) {
@@ -167,16 +176,21 @@ async function getThreadMessages(threadChannel: ThreadChannel) {
     return threadMessages.length < 7 ? threadMessages.reverse() : threadMessages.splice(0, 7);
 }
 
-async function startPeepoGifGenerator() {
-    await sendPeepoGifMessage();
-    setInterval(async () => {
+export async function startPeepoGifGenerator() {
+    if (discordClient) {
         await sendPeepoGifMessage();
+    }
+
+    setInterval(async () => {
+        if (discordClient) {
+            await sendPeepoGifMessage();
+        }
     }, TWO_HOURS);
 }
 
-export async function sendDiscordMessage(channel: TextChannel | ThreadChannel, message: String) {
+export async function sendDiscordMessage(channel, message: String) {
     try {
-        await (channel as TextChannel | ThreadChannel).send(`${message}`);
+        await channel.send(`${message}`);
     } catch (error) {
         console.log(`Peepo failed to send a message: ${message}.`, error);
     }
