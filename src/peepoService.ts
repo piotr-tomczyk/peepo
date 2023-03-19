@@ -6,16 +6,23 @@ import {
 } from 'openai';
 import { peepoVersions } from './peepoVersions.js';
 import { getRandomInt, UserData as UserDataType } from './utils.js';
+import {
+    getTextChannel,
+    sendDiscordMessage
+} from './discordService.js';
 
 dotenv.config();
 
 let peepoVersion = peepoVersions['default'];
+let openAIInstance;
+const ONE_DAY = 1000 * 3600 * 24;
+
 export function initializeOpenAI() {
     const configuration = new Configuration({
         apiKey: process.env.OPENAI_API_KEY,
     });
 
-    const openAIInstance = new OpenAIApi(configuration);
+    openAIInstance = new OpenAIApi(configuration);
 
     if (!configuration.apiKey) {
         throw 'OpenAI API key not configured';
@@ -23,10 +30,8 @@ export function initializeOpenAI() {
     console.log('OpenAI initialized');
 
     generateNewPeepoVersion();
-
-    return openAIInstance;
 }
-export async function generatePeepoResponse(openAIInstance: OpenAIApi, userData: UserDataType) {
+export async function generatePeepoResponse(userData: UserDataType) {
     console.log('Generating Peepo response');
     const messages = [
         getPeepoSystemMessage(),
@@ -35,10 +40,10 @@ export async function generatePeepoResponse(openAIInstance: OpenAIApi, userData:
             content: userData.messageContent,
         } as ChatCompletionRequestMessage,
     ]
-    return generatePeepoMessage(openAIInstance, messages);
+    return generatePeepoMessage(messages);
 }
 
-export async function generatePeepoResponseWithContext(openAIInstance: OpenAIApi, userData: UserDataType) {
+export async function generatePeepoResponseWithContext(userData: UserDataType) {
     console.log('Generating Peepo context response');
     const messages = [
         getPeepoSystemMessage(),
@@ -51,17 +56,17 @@ export async function generatePeepoResponseWithContext(openAIInstance: OpenAIApi
             content: userData.messageContent,
         } as ChatCompletionRequestMessage,
     ]
-    return generatePeepoMessage(openAIInstance, messages);
+    return generatePeepoMessage(messages);
 
 }
 
-export async function generatePeepoResponseInThread(openAIInstance: OpenAIApi, threadMessages: ChatCompletionRequestMessage[]) {
+export async function generatePeepoResponseInThread(threadMessages: ChatCompletionRequestMessage[]) {
     console.log('Generating Peepo thread response');
     const messages = [getPeepoSystemMessage()].concat(threadMessages);
-    return generatePeepoMessage(openAIInstance, messages);
+    return generatePeepoMessage(messages);
 }
 
-export async function generatePeepoGifResponse(openAIInstance: OpenAIApi) {
+export async function generatePeepoGifResponse() {
     const messages = [
         getPeepoSystemMessage(),
         {
@@ -70,10 +75,10 @@ export async function generatePeepoGifResponse(openAIInstance: OpenAIApi) {
                 'use following format, gif: "keyword"',
         } as ChatCompletionRequestMessage,
     ];
-    return generatePeepoMessage(openAIInstance, messages);
+    return generatePeepoMessage(messages);
 }
 
-async function generatePeepoMessage(openAIInstance: OpenAIApi, messages: ChatCompletionRequestMessage[]) {
+async function generatePeepoMessage(messages: ChatCompletionRequestMessage[]) {
     try {
         return (await openAIInstance.createChatCompletion({
             model: 'gpt-4',
@@ -94,20 +99,22 @@ function getPeepoSystemMessage() {
     return {
         role: 'system',
         content: 'Pretend you are discord bot that is friend, not assistant and his name is \'peepo\'. ' +
-            pickPeepoVersion() +
+            getPeepoVersion() +
             'Don\'t say \'How can I help you\' at the end of a message.',
     } as ChatCompletionRequestMessage;
 }
 
-function pickPeepoVersion(): string {
+function getPeepoVersion(): string {
     return peepoVersion;
 }
 
 function generateNewPeepoVersion() {
     const peepoVersionKeys = Object.keys(peepoVersions);
     peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
-    setInterval(() => {
+    setInterval(async () => {
+        const textChannel = await getTextChannel();
+        await sendDiscordMessage(textChannel, 'Peepo is changing :PauseMan:');
         peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
-    }, 1000 * 3600 * 24);
+    }, ONE_DAY);
 }
 
