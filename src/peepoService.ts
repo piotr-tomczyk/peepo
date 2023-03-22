@@ -62,8 +62,14 @@ export async function generatePeepoResponseWithContext(userData: UserDataType) {
 
 export async function generatePeepoResponseInThread(threadMessages: ChatCompletionRequestMessage[]) {
     console.log('Generating Peepo thread response');
-    const messages = [getPeepoSystemMessage()].concat(threadMessages);
-    return generatePeepoMessage(messages);
+    const messages = [
+        getPeepoSystemMessage(),
+        {
+            role: 'system',
+            content: 'Peepo let\'s play a game: I say a word, you respond with a word that starts with 2nd letter of my word, I start: ',
+        } as ChatCompletionRequestMessage
+    ].concat(threadMessages);
+    return generatePeepoMessage(messages, 'gpt-3.5-turbo');
 }
 
 export async function generatePeepoGifResponse() {
@@ -78,10 +84,10 @@ export async function generatePeepoGifResponse() {
     return generatePeepoMessage(messages);
 }
 
-async function generatePeepoMessage(messages: ChatCompletionRequestMessage[]) {
+async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gptVersion = 'gpt-4') {
     try {
         return (await openAIInstance.createChatCompletion({
-            model: 'gpt-4',
+            model: gptVersion,
             messages,
             temperature: 1,
         })).data.choices[0].message.content;
