@@ -128,7 +128,8 @@ export async function sendPeepoGifMessage() {
     const gifChannel = await getDiscordChannelFromId(GIF_CHANNEL_ID);
 
     if (!peepoResponse) {
-        await sendDiscordMessage(gifChannel, 'I failed the gif :Dedge:');
+        const dedgeEmote = getDiscordEmote('Dedge');
+        await sendDiscordMessage(gifChannel, `I failed the gif ${dedgeEmote}`);
     }
 
     const gifRegex = /"([^"]+)"/;
@@ -202,4 +203,8 @@ export async function getDiscordChannelFromId(channelId: string) {
 
 export async function getTextChannel() {
     return discordClient.channels.cache.get(TEXT_CHANNEL_ID);
+}
+
+function getDiscordEmote(emoteName) {
+    return discordClient.emojis.cache.find(emoji => emoji.name === emoteName);
 }
