@@ -77,11 +77,11 @@ export async function generatePeepoGifResponse() {
         getPeepoSystemMessage(),
         {
             role: 'system',
-            content: 'peepo give me some one original gif keyword that represents you well, ' +
+            content: 'Peepo give me random gif keyword.' +
                 ', respond only using following format, gif: "keyword"',
         } as ChatCompletionRequestMessage,
     ];
-    return generatePeepoMessage(messages);
+    return generatePeepoMessage(messages, 'gpt-3.5-turbo');
 }
 
 async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gptVersion = 'gpt-4') {
