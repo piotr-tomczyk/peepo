@@ -130,6 +130,7 @@ export async function sendPeepoGifMessage() {
     if (!peepoResponse) {
         const dedgeEmote = getDiscordEmote('Dedge');
         await sendDiscordMessage(gifChannel, `I failed the gif ${dedgeEmote || ':Dedge:'}`);
+        return;
     }
 
     const gifRegex = /"([^"]+)"/;
