@@ -152,7 +152,8 @@ export async function sendPeepoGifMessage() {
         await sendDiscordMessage(gifChannel, gif);
 
     } catch(error) {
-        await sendDiscordMessage(gifChannel, 'I failed the gif :Dedge:');
+        const dedgeEmote = getDiscordEmote('Dedge');
+        await sendDiscordMessage(gifChannel, `I failed the gif ${dedgeEmote || ':Dedge:'}`);
         console.log('Error while fetching gif', error);
     }
 }
