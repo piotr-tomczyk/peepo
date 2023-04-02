@@ -207,6 +207,6 @@ export async function getTextChannel() {
     return discordClient.channels.cache.get(TEXT_CHANNEL_ID);
 }
 
-function getDiscordEmote(emoteName) {
+export function getDiscordEmote(emoteName) {
     return discordClient.emojis.cache.find(emoji => emoji.name === emoteName);
 }

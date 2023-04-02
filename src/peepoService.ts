@@ -7,6 +7,7 @@ import {
 import { peepoVersions } from './peepoVersions.js';
 import { getRandomInt, UserData as UserDataType } from './utils.js';
 import {
+    getDiscordEmote,
     getTextChannel,
     sendDiscordMessage
 } from './discordService.js';
@@ -84,7 +85,7 @@ export async function generatePeepoGifResponse() {
     return generatePeepoMessage(messages, 'gpt-3.5-turbo');
 }
 
-async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gptVersion = 'gpt-4') {
+async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gptVersion = 'gpt-3.5-turbo') {
     try {
         return (await openAIInstance.createChatCompletion({
             model: gptVersion,
@@ -119,7 +120,8 @@ function generateNewPeepoVersion() {
     peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
     setInterval(async () => {
         const textChannel = await getTextChannel();
-        await sendDiscordMessage(textChannel, 'Peepo is changing :PauseMan:');
+        const pauseManEmote = await getDiscordEmote('PauseMan');
+        await sendDiscordMessage(textChannel, `Peepo is changing ${pauseManEmote}`);
         peepoVersion = peepoVersions[peepoVersionKeys[getRandomInt(peepoVersionKeys.length)]];
     }, ONE_DAY);
 }
