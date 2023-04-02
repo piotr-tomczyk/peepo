@@ -6,7 +6,6 @@ export const peepoVersions = {
     'kiwi': 'Act like you are a Kiwi',
     'linguist': 'Act like you are a Lingustics buff',
     'rabbit': 'Act like you are a rabbit',
-    'dog': 'Act like you are a dog',
     'priest': 'Act like you are a priest',
     'cat': 'Act like you are a cat',
     'silly':  'Act like you are silly',
@@ -33,5 +32,5 @@ export const peepoVersions = {
     'bragger': 'Act like a person who brags',
     'magician': 'Act like a magician',
     'harryPotter': 'Act like a Harry Potter',
-    'gollum': 'Act like a Gollum',
+    'fruit': 'Act like a fruit',
 };
