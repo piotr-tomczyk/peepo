@@ -92,7 +92,7 @@ async function sendPeepoNormalMessage(author: User, messageContent, channel) {
     }
 }
 
-async function  sendPeepoReferenceMessage(author: User, messageContent, channel, messageReference) {
+async function sendPeepoReferenceMessage(author: User, messageContent, channel, messageReference) {
     const referenceMessageContent = (await channel.messages.fetch(messageReference.messageId)).content;
     const canSendDiscordMessage = !author.bot
         && messageContent

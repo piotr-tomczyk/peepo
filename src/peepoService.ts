@@ -70,7 +70,7 @@ export async function generatePeepoResponseInThread(threadMessages: ChatCompleti
             content: 'Peepo let\'s play a game: I say a word, you respond with a word that starts with 2nd letter of my word, I start: ',
         } as ChatCompletionRequestMessage
     ].concat(threadMessages);
-    return generatePeepoMessage(messages, 'gpt-3.5-turbo');
+    return generatePeepoMessage(messages, 'gpt-4o-mini');
 }
 
 export async function generatePeepoGifResponse() {
@@ -82,10 +82,10 @@ export async function generatePeepoGifResponse() {
                 ', respond only using following format, gif: "keyword"',
         } as ChatCompletionRequestMessage,
     ];
-    return generatePeepoMessage(messages, 'gpt-3.5-turbo');
+    return generatePeepoMessage(messages, 'gpt-4o-mini');
 }
 
-async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gptVersion = 'gpt-3.5-turbo') {
+async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gptVersion = 'gpt-4o-mini') {
     try {
         return (await openAIInstance.createChatCompletion({
             model: gptVersion,
