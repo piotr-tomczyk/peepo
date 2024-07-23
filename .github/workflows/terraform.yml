@@ -40,8 +40,8 @@ jobs:
       # Generates an execution plan for Terraform
       - name: Terraform Plan
         run: |
-          echo $gcp_project
-          echo $gcp_region
+          export gcp_region=${{ secrets.GCP_REGION }}
+          export gcp_project=${{ secrets.GCP_PROJECT }}
           terraform plan -input=false
         env:
           gcp_region: ${{ secrets.GCP_REGION }}
@@ -52,7 +52,9 @@ jobs:
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
         if: github.event_name == 'push'
-        run:
+        run: |
+          export gcp_region=${{ secrets.GCP_REGION }}
+          export gcp_project=${{ secrets.GCP_PROJECT }}
           terraform apply -auto-approve -input=false
         env:
           gcp_region: ${{ secrets.GCP_REGION }}
