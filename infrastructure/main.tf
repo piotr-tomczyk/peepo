@@ -14,7 +14,7 @@ resource "google_compute_instance" "default" {
   name         = "peepo-vm"
   machine_type = "e2-micro"
   zone         = "us-central1-a"
-  metadata_startup_script = file("../startup.sh")
+  metadata_startup_script = file("./startup.sh")
 
   boot_disk {
     initialize_params {
