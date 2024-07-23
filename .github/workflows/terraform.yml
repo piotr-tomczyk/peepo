@@ -39,7 +39,7 @@ jobs:
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
-        run:
+        run: |
           echo $gcp_project
           echo $gcp_region
           terraform plan -input=false
