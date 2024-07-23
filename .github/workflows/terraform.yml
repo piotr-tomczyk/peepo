@@ -2,7 +2,7 @@ name: 'Terraform'
 
 on:
   push:
-    branches: [ "peepo-terraforming" ]
+    branches: [ "master" ]
   pull_request:
 
 permissions:
@@ -49,7 +49,6 @@ jobs:
         # On push to "main", build or change infrastructure according to Terraform configuration files
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
-        if: github.event_name == 'push'
         run:
           terraform apply -auto-approve -input=false -var "gcp_region=${{ secrets.GCP_REGION }}" -var "gcp_project=${{ secrets.GCP_PROJECT }}"
         env:

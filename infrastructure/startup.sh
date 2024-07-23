@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 curl -fsSL https://get.pnpm.io/install.sh | sh -
-sudo apt-get install git
+sudo apt-get -y install git
 git clone https://github.com/piotr-tomczyk/peepo.git
 cd peepo
 git checkout peepo-terraforming
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 nvm install 20.15.1
 nvm install node
 pnpm i pm2@latest -g
