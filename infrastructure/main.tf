@@ -30,24 +30,42 @@ resource "google_compute_instance" "default" {
 
 resource "google_secret_manager_secret" "discord-token" {
   secret_id = "discord-token"
+  replication {
+    auto {}
+  }
 }
 
 resource "google_secret_manager_secret" "openapi-token" {
   secret_id = "openapi-token"
+  replication {
+    auto {}
+  }
 }
 
 resource "google_secret_manager_secret" "tenorapi-token" {
   secret_id = "tenorapi-token"
+  replication {
+    auto {}
+  }
 }
 
 resource "google_secret_manager_secret" "textchannel-id" {
   secret_id = "textchannel-id"
+  replication {
+    auto {}
+  }
 }
 
 resource "google_secret_manager_secret" "gifchannel-id" {
   secret_id = "gifchannel-id"
+  replication {
+    auto {}
+  }
 }
 
 resource "google_secret_manager_secret" "guild-id" {
   secret_id = "guild-id"
+  replication {
+    auto {}
+  }
 }
