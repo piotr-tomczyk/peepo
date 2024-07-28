@@ -73,13 +73,14 @@ export async function generatePeepoResponseInThread(threadMessages: ChatCompleti
     return generatePeepoMessage(messages, 'gpt-4o-mini');
 }
 
-export async function generatePeepoGifResponse() {
+export async function generatePeepoGifResponse(usedGifKeywords: string[]) {
     const messages = [
         getPeepoSystemMessage(),
         {
             role: 'system',
             content: 'Peepo give me random gif keyword.' +
-                ', respond only using following format, gif: "keyword"',
+                ', respond only using following format, gif: "keyword"' +
+                'don\'t use ' + usedGifKeywords.join(', ') + ' as keywords',
         } as ChatCompletionRequestMessage,
     ];
     return generatePeepoMessage(messages, 'gpt-4o-mini');

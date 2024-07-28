@@ -17,7 +17,10 @@ import { ChatCompletionRequestMessage } from 'openai';
 let discordClient;
 const TEXT_CHANNEL_ID = process.env.TEXT_CHANNEL_ID;
 const GIF_CHANNEL_ID = process.env.GIF_CHANNEL_ID;
-const TWO_HOURS = 1000 * 3600 * 2
+const TWO_HOURS = 1000 * 3600 * 2;
+
+const usedGifKeywords = [];
+
 export async function initializeDiscordClient() {
     dotenv.config();
     discordClient = new Client({
@@ -124,7 +127,7 @@ async function sendPeepoThreadMessage(threadMessages, author, messageContent, ch
 }
 
 export async function sendPeepoGifMessage() {
-    const peepoResponse = await generatePeepoGifResponse();
+    const peepoResponse = await generatePeepoGifResponse(usedGifKeywords);
     const gifChannel = await getDiscordChannelFromId(GIF_CHANNEL_ID);
 
     if (!peepoResponse) {
@@ -143,13 +146,15 @@ export async function sendPeepoGifMessage() {
         tenorQuery = peepoResponse;
     }
 
+    pushKeywordToUsedKeywords(tenorQuery);
+
     try {
         const tenorApiKey = process.env.TENOR_API_KEY;
-        const tenorLimit = 1;
+        const tenorLimit = 3;
         const tenorMediaFilter = 'gif';
         const tenorUrl = `https://tenor.googleapis.com/v2/search?q=${tenorQuery}&key=${tenorApiKey}&limit=${tenorLimit}&media_filter=${tenorMediaFilter}`;
         const gifResponse: any = await axios.get(tenorUrl);
-        const gif = gifResponse.data?.results?.[0].url;
+        const gif = gifResponse.data?.results?.[Math.floor(Math.random() * (tenorLimit - 1))].url;
         await sendDiscordMessage(gifChannel, gif);
 
     } catch(error) {
@@ -177,6 +182,13 @@ async function getThreadMessages(threadChannel: ThreadChannel) {
     }
 
     return threadMessages.length < 7 ? threadMessages.reverse() : threadMessages.splice(0, 7);
+}
+
+function pushKeywordToUsedKeywords(keyword) {
+    if (usedGifKeywords.length > 5) {
+        usedGifKeywords.shift();
+    }
+    usedGifKeywords.push(keyword);
 }
 
 export async function startPeepoGifGenerator() {
