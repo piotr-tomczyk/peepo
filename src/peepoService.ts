@@ -83,7 +83,7 @@ export async function generatePeepoGifResponse(usedGifKeywords: string[]) {
                 'don\'t use ' + usedGifKeywords.join(', ') + ' as keywords',
         } as ChatCompletionRequestMessage,
     ];
-    return generatePeepoMessage(messages, 'gpt-4o-mini');
+    return generatePeepoMessage(messages, 'gpt-4o');
 }
 
 async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gptVersion = 'gpt-4o-mini') {
