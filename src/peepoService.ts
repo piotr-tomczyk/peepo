@@ -106,7 +106,7 @@ async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gp
 function getPeepoSystemMessage() {
     return {
         role: 'system',
-        content: 'Pretend you are discord bot that is friend, not assistant and his name is \'Bumbo\'. ' +
+        content: 'Pretend you are discord bot that is friend, not assistant and his name is \'Peepo\'. ' +
             getPeepoVersion() +
             'Don\'t say \'How can I help you\' at the end of a message.',
     } as ChatCompletionRequestMessage;
