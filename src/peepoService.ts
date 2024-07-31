@@ -41,7 +41,7 @@ export async function generatePeepoResponse(userData: UserDataType) {
             content: userData.messageContent,
         } as ChatCompletionRequestMessage,
     ]
-    return generatePeepoMessage(messages, 'gpt-4-turbo');
+    return generatePeepoMessage(messages, 'gpt-4o');
 }
 
 export async function generatePeepoResponseWithContext(userData: UserDataType) {
@@ -57,7 +57,7 @@ export async function generatePeepoResponseWithContext(userData: UserDataType) {
             content: userData.messageContent,
         } as ChatCompletionRequestMessage,
     ]
-    return generatePeepoMessage(messages, 'gpt-4-turbo');
+    return generatePeepoMessage(messages, 'gpt-4o');
 
 }
 
@@ -70,7 +70,7 @@ export async function generatePeepoResponseInThread(threadMessages: ChatCompleti
             content: 'Peepo let\'s play a game: I say a word, you respond with a word that starts with 2nd letter of my word, I start: ',
         } as ChatCompletionRequestMessage
     ].concat(threadMessages);
-    return generatePeepoMessage(messages, 'gpt-4-turbo');
+    return generatePeepoMessage(messages, 'gpt-4o');
 }
 
 export async function generatePeepoGifResponse(usedGifKeywords: string[]) {
@@ -106,7 +106,7 @@ async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gp
 function getPeepoSystemMessage() {
     return {
         role: 'system',
-        content: 'Pretend you are discord bot that is friend, not assistant and his name is \'peepo\'. ' +
+        content: 'Pretend you are discord bot that is friend, not assistant and his name is \'Bumbo\'. ' +
             getPeepoVersion() +
             'Don\'t say \'How can I help you\' at the end of a message.',
     } as ChatCompletionRequestMessage;
