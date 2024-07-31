@@ -41,7 +41,7 @@ export async function generatePeepoResponse(userData: UserDataType) {
             content: userData.messageContent,
         } as ChatCompletionRequestMessage,
     ]
-    return generatePeepoMessage(messages);
+    return generatePeepoMessage(messages, 'gpt-4-turbo');
 }
 
 export async function generatePeepoResponseWithContext(userData: UserDataType) {
@@ -57,7 +57,7 @@ export async function generatePeepoResponseWithContext(userData: UserDataType) {
             content: userData.messageContent,
         } as ChatCompletionRequestMessage,
     ]
-    return generatePeepoMessage(messages);
+    return generatePeepoMessage(messages, 'gpt-4-turbo');
 
 }
 
@@ -70,7 +70,7 @@ export async function generatePeepoResponseInThread(threadMessages: ChatCompleti
             content: 'Peepo let\'s play a game: I say a word, you respond with a word that starts with 2nd letter of my word, I start: ',
         } as ChatCompletionRequestMessage
     ].concat(threadMessages);
-    return generatePeepoMessage(messages, 'gpt-4o-mini');
+    return generatePeepoMessage(messages, 'gpt-4-turbo');
 }
 
 export async function generatePeepoGifResponse(usedGifKeywords: string[]) {
@@ -83,7 +83,7 @@ export async function generatePeepoGifResponse(usedGifKeywords: string[]) {
                 'don\'t use ' + usedGifKeywords.join(', ') + ' as keywords',
         } as ChatCompletionRequestMessage,
     ];
-    return generatePeepoMessage(messages, 'gpt-4o');
+    return generatePeepoMessage(messages, 'gpt-4o-mini');
 }
 
 async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gptVersion = 'gpt-4o-mini') {
