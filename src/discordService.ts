@@ -17,6 +17,7 @@ import { ChatCompletionRequestMessage } from 'openai';
 let discordClient;
 const TEXT_CHANNEL_ID = process.env.TEXT_CHANNEL_ID;
 const GIF_CHANNEL_ID = process.env.GIF_CHANNEL_ID;
+const SPANISH_CHANNEL_ID = process.env.SPANISH_CHANNEL_ID;
 const TWO_HOURS = 1000 * 3600 * 2;
 
 const usedGifKeywords = [];
@@ -43,15 +44,20 @@ export async function initializeDiscordClient() {
 async function handleDiscordMessageEvent(discordMessage) {
     const messageChannelId = discordMessage.channelId;
     const messageChannel = await getDiscordChannelFromId(messageChannelId);
-    const mainChannel = await getDiscordChannelFromId(TEXT_CHANNEL_ID);
+    const isMainChannel = messageChannelId === TEXT_CHANNEL_ID;
+    const isSpanishChannel = messageChannelId === SPANISH_CHANNEL_ID;
 
     const isMessageChannelAThread = messageChannel.isThread();
 
     if (isMessageChannelAThread
-        && messageChannel.parentId !== TEXT_CHANNEL_ID) {
+        && messageChannel.parentId !== TEXT_CHANNEL_ID
+        && messageChannel.parentId !== SPANISH_CHANNEL_ID) {
         return;
     } else if (!isMessageChannelAThread
-        && messageChannelId !== TEXT_CHANNEL_ID) {
+        && messageChannelId !== TEXT_CHANNEL_ID
+        && messageChannelId !== SPANISH_CHANNEL_ID) {
+        return;
+    } else if (!discordMessage.author) {
         return;
     }
 
@@ -60,26 +66,33 @@ async function handleDiscordMessageEvent(discordMessage) {
     const messageContent = discordMessage.content;
     const messageReference = discordMessage.reference;
 
+    if (isMessageChannelAThread) {
+        const threadMessages = await getThreadMessages(messageChannel);
+        await sendPeepoThreadMessage(threadMessages, author, messageContent, messageChannel, isSpanishChannel);
+        return;
+    }
+
     if (messageReference) {
         await sendPeepoReferenceMessage(
             author,
             messageContent,
-            isMessageChannelAThread ? messageChannel : mainChannel,
-            messageReference
+            messageChannel,
+            messageReference,
+            isSpanishChannel,
         );
         return;
     }
 
-    if (isMessageChannelAThread) {
-        const threadMessages = await getThreadMessages(messageChannel);
-        await sendPeepoThreadMessage(threadMessages, author, messageContent, messageChannel);
-        return;
+    if (isMainChannel) {
+        await sendPeepoNormalMessage(author, messageContent, messageChannel);
     }
 
-    await sendPeepoNormalMessage(author, messageContent, mainChannel);
+    if (isSpanishChannel) {
+        await sendPeepoNormalMessage(author, messageContent, messageChannel, true);
+    }
 }
 
-async function sendPeepoNormalMessage(author: User, messageContent, channel) {
+async function sendPeepoNormalMessage(author: User, messageContent, channel, isSpanishMessage = false) {
     const canSendDiscordMessage = !author.bot
         && messageContent;
     if (canSendDiscordMessage) {
@@ -87,7 +100,8 @@ async function sendPeepoNormalMessage(author: User, messageContent, channel) {
             {
                 messageContent,
                 username: author.username
-            }
+            },
+            isSpanishMessage
         );
         console.log('Generated peepo response');
         await sendDiscordMessage(channel, peepoResponse);
@@ -95,7 +109,7 @@ async function sendPeepoNormalMessage(author: User, messageContent, channel) {
     }
 }
 
-async function sendPeepoReferenceMessage(author: User, messageContent, channel, messageReference) {
+async function sendPeepoReferenceMessage(author: User, messageContent, channel, messageReference, isSpanishMessage = false) {
     const referenceMessageContent = (await channel.messages.fetch(messageReference.messageId)).content;
     const canSendDiscordMessage = !author.bot
         && messageContent
@@ -106,7 +120,8 @@ async function sendPeepoReferenceMessage(author: User, messageContent, channel, 
                 messageContent,
                 referenceMessageContent,
                 username: author.username,
-            }
+            },
+            isSpanishMessage,
         );
         console.log('Generated peepo context response');
         await sendDiscordMessage(channel, peepoResponse);
@@ -114,12 +129,15 @@ async function sendPeepoReferenceMessage(author: User, messageContent, channel, 
     }
 }
 
-async function sendPeepoThreadMessage(threadMessages, author, messageContent, channel) {
+async function sendPeepoThreadMessage(threadMessages, author, messageContent, channel, isSpanishChannel = false) {
     const canSendDiscordMessage = !author.bot
         && messageContent
         && threadMessages;
     if (canSendDiscordMessage) {
-        const peepoResponse = await generatePeepoResponseInThread(threadMessages);
+        const userData = {
+            username: author.username,
+        };
+        const peepoResponse = await generatePeepoResponseInThread(userData, threadMessages, isSpanishChannel);
         console.log('Generated peepo thread response');
         await sendDiscordMessage(channel, peepoResponse);
         console.log('Peepo thread message sent');

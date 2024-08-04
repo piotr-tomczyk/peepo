@@ -32,22 +32,22 @@ export function initializeOpenAI() {
 
     generateNewPeepoVersion();
 }
-export async function generatePeepoResponse(userData: UserDataType) {
+export async function generatePeepoResponse(userData: UserDataType, isSpanishMessage = false) {
     console.log('Generating Peepo response');
     const messages = [
-        getPeepoSystemMessage(),
+        isSpanishMessage ? getPeepoSpanishSystemMessage(userData.username) : getPeepoSystemMessage(userData.username),
         {
             role: 'user',
             content: userData.messageContent,
         } as ChatCompletionRequestMessage,
     ]
-    return generatePeepoMessage(messages, 'gpt-4o');
+    return generatePeepoMessage(messages, 'gpt-4o-mini');
 }
 
-export async function generatePeepoResponseWithContext(userData: UserDataType) {
+export async function generatePeepoResponseWithContext(userData: UserDataType, isSpanishMessage = false) {
     console.log('Generating Peepo context response');
     const messages = [
-        getPeepoSystemMessage(),
+        isSpanishMessage ? getPeepoSpanishSystemMessage(userData.username) : getPeepoSystemMessage(userData.username),
         {
             role: 'assistant',
             content: userData.referenceMessageContent,
@@ -57,20 +57,16 @@ export async function generatePeepoResponseWithContext(userData: UserDataType) {
             content: userData.messageContent,
         } as ChatCompletionRequestMessage,
     ]
-    return generatePeepoMessage(messages, 'gpt-4o');
+    return generatePeepoMessage(messages, 'gpt-4o-mini');
 
 }
 
-export async function generatePeepoResponseInThread(threadMessages: ChatCompletionRequestMessage[]) {
+export async function generatePeepoResponseInThread(userData, threadMessages: ChatCompletionRequestMessage[], isSpanishChannel = false) {
     console.log('Generating Peepo thread response');
     const messages = [
-        getPeepoSystemMessage(),
-        {
-            role: 'system',
-            content: 'Peepo let\'s play a game: I say a word, you respond with a word that starts with 2nd letter of my word, I start: ',
-        } as ChatCompletionRequestMessage
+        isSpanishChannel ? getPeepoSpanishSystemMessage(userData.username) : getPeepoSystemMessage(userData.username),
     ].concat(threadMessages);
-    return generatePeepoMessage(messages, 'gpt-4o');
+    return generatePeepoMessage(messages, 'gpt-4o-mini');
 }
 
 export async function generatePeepoGifResponse(usedGifKeywords: string[]) {
@@ -103,11 +99,27 @@ async function generatePeepoMessage(messages: ChatCompletionRequestMessage[], gp
     }
 }
 
-function getPeepoSystemMessage() {
+function getPeepoSystemMessage(discordUsername: String = '') {
     return {
         role: 'system',
         content: 'Pretend you are discord bot that is friend, not assistant and his name is \'Peepo\'. ' +
             getPeepoVersion() +
+            `. Discord user: ${discordUsername ? `${discordUsername} is the person you are chatting with` : ''}.` +
+            'Don\'t say \'How can I help you\' at the end of a message.',
+    } as ChatCompletionRequestMessage;
+}
+
+function getPeepoSpanishSystemMessage (discordUsername: String = '') {
+    return {
+        role: 'system',
+        content: 'Pretend you are Spanish speaking discord bot that is friend, not assistant and his name is \'Peepo\'. ' +
+            getPeepoVersion() +
+            `. Discord user: ${discordUsername ? `${discordUsername} is the person you are chatting with` : ''}.` +
+            'Your goal is to be a Spanish speaking assistant that would help beginners to learn Spanish. ' +
+            'You should always answer in Spanish.' +
+            'At the end of your message provide english translation of harder verbs you used from above total beginner level.' +
+            'Use format \'English: Spanish verb\'.' +
+            'Don\' translate whole message.' +
             'Don\'t say \'How can I help you\' at the end of a message.',
     } as ChatCompletionRequestMessage;
 }
